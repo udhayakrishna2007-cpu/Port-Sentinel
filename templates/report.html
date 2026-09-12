@@ -1,0 +1,574 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Security Report — Port Sentinel
+{% endblock %}
+
+
+{% block content %}
+
+<div class="report-page">
+
+
+    <!-- REPORT HEADER -->
+
+    <section class="report-hero">
+
+        <div>
+
+            <div class="eyebrow">
+                PORT SENTINEL / SECURITY REPORT
+            </div>
+
+            <h1>
+                Security assessment
+            </h1>
+
+            <p>
+                A structured assessment of the scanned environment,
+                exposed services and identified security concerns.
+            </p>
+
+        </div>
+
+
+        <div class="report-id-card liquid-card">
+
+            <span>
+                SCAN
+            </span>
+
+            <strong>
+                #{{ scan[0] }}
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- META -->
+
+    <section class="report-meta-grid">
+
+        <div class="report-meta-card liquid-card">
+
+            <span>
+                TARGET
+            </span>
+
+            <strong>
+                {{ scan[1] }}
+            </strong>
+
+        </div>
+
+
+        <div class="report-meta-card liquid-card">
+
+            <span>
+                SCAN DATE
+            </span>
+
+            <strong>
+                {{ scan[2] }}
+            </strong>
+
+        </div>
+
+
+        <div class="report-meta-card liquid-card">
+
+            <span>
+                SCAN ID
+            </span>
+
+            <strong>
+                #{{ scan[0] }}
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- OVERVIEW -->
+
+    <section class="report-overview liquid-card">
+
+        <div class="eyebrow">
+            ASSESSMENT OVERVIEW
+        </div>
+
+
+        <h2>
+            {% if open_ports > 0 %}
+                {{ open_ports }} open
+                port{% if open_ports != 1 %}s{% endif %}
+                discovered.
+            {% else %}
+                No open ports discovered.
+            {% endif %}
+        </h2>
+
+
+        {% if open_ports > 0 %}
+
+        <p>
+            The assessment identified
+            <strong>{{ open_ports }}</strong>
+            open port{% if open_ports != 1 %}s{% endif %}
+            across
+            <strong>{{ hosts_found }}</strong>
+            host{% if hosts_found != 1 %}s{% endif %}.
+        </p>
+
+        {% else %}
+
+        <p>
+            The scan completed successfully and did not identify
+            any open ports on the target.
+        </p>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- SUMMARY -->
+
+    <section class="report-summary-grid">
+
+
+        <div class="report-summary-card liquid-card">
+
+            <span>
+                HOSTS
+            </span>
+
+            <strong>
+                {{ hosts_found }}
+            </strong>
+
+        </div>
+
+
+        <div class="report-summary-card liquid-card">
+
+            <span>
+                OPEN PORTS
+            </span>
+
+            <strong>
+                {{ open_ports }}
+            </strong>
+
+        </div>
+
+
+        <div class="report-summary-card liquid-card">
+
+            <span>
+                SERVICES
+            </span>
+
+            <strong>
+                {{ services_found }}
+            </strong>
+
+        </div>
+
+
+        <div class="report-summary-card liquid-card">
+
+            <span>
+                FINDINGS
+            </span>
+
+            <strong>
+                {{ high_count + medium_count + info_count }}
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- SECURITY -->
+
+    <section class="security-card liquid-card">
+
+        <div class="security-card-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    SECURITY ASSESSMENT
+                </span>
+
+                <h2>
+                    Current security posture
+                </h2>
+
+            </div>
+
+
+            <div class="security-status {{ security_status_class }}">
+
+                {% if security_status_class == "high" %}
+                    HIGH PRIORITY
+                {% elif security_status_class == "medium" %}
+                    ATTENTION REQUIRED
+                {% elif security_status_class == "info" %}
+                    INFORMATIONAL
+                {% else %}
+                    NO IMMEDIATE FINDINGS
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <div class="security-count-grid">
+
+            <div>
+
+                <strong>
+                    {{ high_count }}
+                </strong>
+
+                <span>
+                    High
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    {{ medium_count }}
+                </strong>
+
+                <span>
+                    Medium
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    {{ info_count }}
+                </strong>
+
+                <span>
+                    Info
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FINDINGS -->
+
+    <section class="recommendations-card liquid-card">
+
+        <div class="panel-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    SECURITY FINDINGS
+                </span>
+
+                <h2>
+                    Recommendations
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        {% if recommendations %}
+
+        <div class="recommendations-list">
+
+        {% for recommendation in recommendations %}
+
+            <article class="recommendation-item">
+
+                <div class="recommendation-top">
+
+                    <span
+                        class="
+                            severity-badge
+                            {{ recommendation.severity|lower }}
+                        "
+                    >
+                        {{ recommendation.severity }}
+                    </span>
+
+
+                    <span class="recommendation-service">
+
+                        {{ recommendation.service }}
+
+                        <span>
+                            ·
+                        </span>
+
+                        Port {{ recommendation.port }}
+
+                    </span>
+
+                </div>
+
+
+                <h3>
+                    {{ recommendation.message }}
+                </h3>
+
+
+                <div class="recommendation-action">
+
+                    <span>
+                        RECOMMENDATION
+                    </span>
+
+                    <p>
+                        {{ recommendation.recommendation }}
+                    </p>
+
+                </div>
+
+            </article>
+
+        {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-state-icon">
+                ✓
+            </div>
+
+            <h3>
+                No security findings identified
+            </h3>
+
+            <p>
+                The assessment did not produce actionable
+                security recommendations.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- PORT RESULTS -->
+
+    <section class="results-card liquid-card">
+
+        <div class="panel-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    RAW DISCOVERY
+                </span>
+
+                <h2>
+                    Port results
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        {% if results %}
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Host</th>
+                        <th>Protocol</th>
+                        <th>Port</th>
+                        <th>State</th>
+                        <th>Service</th>
+                        <th>Product</th>
+                        <th>Version</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for result in results %}
+
+                    <tr>
+
+                        <td>
+                            {{ result.host }}
+                        </td>
+
+                        <td>
+                            {{ result.protocol }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ result.port }}
+                            </strong>
+                        </td>
+
+                        <td>
+
+                            <span class="state-badge">
+                                {{ result.state }}
+                            </span>
+
+                        </td>
+
+                        <td>
+                            {{ result.service }}
+                        </td>
+
+                        <td>
+                            {{ result.product or "—" }}
+                        </td>
+
+                        <td>
+                            {{ result.version or "—" }}
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-state-icon">
+                ✓
+            </div>
+
+            <h3>
+                No open ports found
+            </h3>
+
+            <p>
+                No open ports were discovered during this assessment.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- REPORT ACTIONS -->
+
+    <section class="report-actions liquid-card">
+
+        <div>
+
+            <span class="eyebrow">
+                REPORT OUTPUT
+            </span>
+
+            <h2>
+                Take this assessment with you.
+            </h2>
+
+        </div>
+
+
+        <div class="report-action-buttons">
+
+            <button
+                type="button"
+                class="secondary-liquid-button"
+                onclick="window.print()"
+            >
+                Print report
+            </button>
+
+
+            <a
+                href="{{ url_for('download_pdf_report', scan_id=scan_id) }}"
+                class="secondary-liquid-button"
+            >
+                Download PDF
+            </a>
+
+
+            <a
+                href="{{ url_for('download_xml_report', scan_id=scan_id) }}"
+                class="secondary-liquid-button"
+            >
+                Download XML
+            </a>
+
+
+            <form
+                action="{{ url_for('email_report', scan_id=scan_id) }}"
+                method="POST"
+                class="email-report-form"
+            >
+
+                <input
+                    type="email"
+                    name="recipient_email"
+                    placeholder="Recipient email"
+                    autocomplete="email"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="primary-liquid-button"
+                >
+                    Send report
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Create Account — Port Sentinel
+{% endblock %}
+
+
+{% block content %}
+
+<div class="auth-page">
+
+
+    <section class="auth-card register-card liquid-card">
+
+
+        <div class="auth-brand">
+
+            <span class="brand-symbol">
+                <span class="brand-symbol-inner"></span>
+            </span>
+
+        </div>
+
+
+        <div class="eyebrow">
+            PORT SENTINEL
+        </div>
+
+
+        <h1>
+            Build your security space.
+        </h1>
+
+
+        <p class="auth-description">
+            Create your Port Sentinel account and begin
+            monitoring your security environment.
+        </p>
+
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+            <div class="auth-flashes">
+
+                {% for category, message in messages %}
+
+                <div class="flash-message {{ category }}">
+                    <span class="flash-dot"></span>
+                    {{ message }}
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <form
+            action="{{ url_for('register') }}"
+            method="POST"
+            class="auth-form"
+        >
+
+
+            <div class="field-group">
+
+                <label for="username">
+                    USERNAME
+                </label>
+
+                <div class="input-shell">
+
+                    <span class="input-prefix">
+                        @
+                    </span>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Choose a username"
+                        autocomplete="username"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="field-group">
+
+                <label for="email">
+                    EMAIL
+                </label>
+
+                <div class="input-shell">
+
+                    <span class="input-prefix">
+                        @
+                    </span>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="field-group">
+
+                <label for="password">
+                    PASSWORD
+                </label>
+
+                <div class="input-shell">
+
+                    <span class="input-prefix">
+                        •
+                    </span>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Minimum 8 characters"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="password-strength">
+
+                <div class="password-strength-header">
+
+                    <span>
+                        Password strength
+                    </span>
+
+                    <strong
+                        id="passwordStrengthText"
+                    >
+                        Enter password
+                    </strong>
+
+                </div>
+
+
+                <div class="password-strength-points">
+
+                    <span
+                        class="strength-point"
+                        id="strengthPoint1"
+                    ></span>
+
+                    <span
+                        class="strength-point"
+                        id="strengthPoint2"
+                    ></span>
+
+                    <span
+                        class="strength-point"
+                        id="strengthPoint3"
+                    ></span>
+
+                    <span
+                        class="strength-point"
+                        id="strengthPoint4"
+                    ></span>
+
+                </div>
+
+            </div>
+
+
+            <div class="field-group">
+
+                <label for="confirm_password">
+                    CONFIRM PASSWORD
+                </label>
+
+                <div class="input-shell">
+
+                    <span class="input-prefix">
+                        •
+                    </span>
+
+                    <input
+                        type="password"
+                        id="confirm_password"
+                        name="confirm_password"
+                        placeholder="Re-enter your password"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="primary-liquid-button auth-submit"
+            >
+
+                <span>
+                    Create account
+                </span>
+
+                <strong>
+                    →
+                </strong>
+
+            </button>
+
+
+        </form>
+
+
+        <div class="auth-footer">
+
+            <span>
+                Already have an account?
+            </span>
+
+            <a href="{{ url_for('login') }}">
+                Sign in
+            </a>
+
+        </div>
+
+
+    </section>
+
+
+</div>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const password =
+            document.getElementById(
+                "password"
+            );
+
+
+        const text =
+            document.getElementById(
+                "passwordStrengthText"
+            );
+
+
+        const points = [
+
+            document.getElementById(
+                "strengthPoint1"
+            ),
+
+            document.getElementById(
+                "strengthPoint2"
+            ),
+
+            document.getElementById(
+                "strengthPoint3"
+            ),
+
+            document.getElementById(
+                "strengthPoint4"
+            )
+
+        ];
+
+
+        if (!password || !text) {
+            return;
+        }
+
+
+        password.addEventListener(
+            "input",
+            function () {
+
+                const value =
+                    password.value;
+
+
+                let score = 0;
+
+
+                if (value.length >= 8) {
+                    score++;
+                }
+
+
+                if (value.length >= 12) {
+                    score++;
+                }
+
+
+                if (/[a-z]/.test(value)) {
+                    score++;
+                }
+
+
+                if (/[A-Z]/.test(value)) {
+                    score++;
+                }
+
+
+                if (/[0-9]/.test(value)) {
+                    score++;
+                }
+
+
+                if (/[^A-Za-z0-9]/.test(value)) {
+                    score++;
+                }
+
+
+                points.forEach(
+                    function (point) {
+
+                        point.className =
+                            "strength-point";
+
+                    }
+                );
+
+
+                if (!value) {
+
+                    text.textContent =
+                        "Enter password";
+
+                    return;
+
+                }
+
+
+                let level = 1;
+
+
+                if (score >= 5) {
+
+                    level = 4;
+
+                    text.textContent =
+                        "Strong";
+
+                }
+
+                else if (score >= 3) {
+
+                    level = 3;
+
+                    text.textContent =
+                        "Moderate";
+
+                }
+
+                else {
+
+                    level = 1;
+
+                    text.textContent =
+                        "Weak";
+
+                }
+
+
+                for (
+                    let i = 0;
+                    i < level;
+                    i++
+                ) {
+
+                    if (points[i]) {
+
+                        points[i].classList.add(
+                            "active"
+                        );
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}

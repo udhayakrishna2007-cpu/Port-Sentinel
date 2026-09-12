@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Scan History — Port Sentinel
+{% endblock %}
+
+
+{% block content %}
+
+<div class="history-page">
+
+
+    <section class="history-hero">
+
+        <div>
+
+            <div class="eyebrow">
+                SECURITY ARCHIVE
+            </div>
+
+            <h1>
+                Scan history
+            </h1>
+
+            <p>
+                Every completed assessment, preserved in one place.
+            </p>
+
+        </div>
+
+
+        {% if scans %}
+
+        <div class="history-count-card liquid-card">
+
+            <strong>
+                {{ scans|length }}
+            </strong>
+
+            <span>
+                assessment{% if scans|length != 1 %}s{% endif %}
+            </span>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    {% if scans %}
+
+    <section class="history-card liquid-card">
+
+        <div class="panel-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    PREVIOUS ASSESSMENTS
+                </span>
+
+                <h2>
+                    Your security timeline
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="history-list">
+
+        {% for scan in scans %}
+
+            <article class="history-row">
+
+                <div class="history-index">
+
+                    <span>
+                        {{ loop.index|string|replace('0','0') }}
+                    </span>
+
+                </div>
+
+
+                <div class="history-target">
+
+                    <span>
+                        TARGET
+                    </span>
+
+                    <strong>
+                        {{ scan[1] }}
+                    </strong>
+
+                </div>
+
+
+                <div class="history-date">
+
+                    <span>
+                        DATE
+                    </span>
+
+                    <strong>
+                        {{ scan[2] }}
+                    </strong>
+
+                </div>
+
+
+                <div class="history-id">
+
+                    <span>
+                        SCAN
+                    </span>
+
+                    <strong>
+                        #{{ scan[0] }}
+                    </strong>
+
+                </div>
+
+
+                <div class="history-actions">
+
+                    <a
+                        href="{{ url_for('scan_history', scan_id=scan[0]) }}"
+                        class="small-action"
+                    >
+                        View
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('report', scan_id=scan[0]) }}"
+                        class="small-action secondary"
+                    >
+                        Report
+                    </a>
+
+                </div>
+
+            </article>
+
+        {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    {% else %}
+
+    <section class="empty-history liquid-card">
+
+        <div class="empty-state-icon">
+            ◌
+        </div>
+
+        <h2>
+            No scans yet
+        </h2>
+
+        <p>
+            Completed security assessments will appear here.
+        </p>
+
+
+        <a
+            href="{{ url_for('home') }}"
+            class="primary-liquid-button"
+        >
+            Start your first scan →
+        </a>
+
+    </section>
+
+    {% endif %}
+
+
+</div>
+
+{% endblock %}

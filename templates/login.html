@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Login — Port Sentinel
+{% endblock %}
+
+
+{% block content %}
+
+<div class="auth-page">
+
+
+    <section class="auth-card liquid-card">
+
+
+        <div class="auth-brand">
+
+            <span class="brand-symbol">
+                <span class="brand-symbol-inner"></span>
+            </span>
+
+        </div>
+
+
+        <div class="eyebrow">
+            PORT SENTINEL
+        </div>
+
+
+        <h1>
+            Welcome back.
+        </h1>
+
+
+        <p class="auth-description">
+            Sign in to access your security intelligence dashboard.
+        </p>
+
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+            <div class="auth-flashes">
+
+                {% for category, message in messages %}
+
+                <div class="flash-message {{ category }}">
+                    <span class="flash-dot"></span>
+                    {{ message }}
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <form
+            action="{{ url_for('login') }}"
+            method="POST"
+            class="auth-form"
+        >
+
+
+            <div class="field-group">
+
+                <label for="username">
+                    USERNAME
+                </label>
+
+                <div class="input-shell">
+
+                    <span class="input-prefix">
+                        @
+                    </span>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your username"
+                        autocomplete="username"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="field-group">
+
+                <label for="password">
+                    PASSWORD
+                </label>
+
+                <div class="input-shell">
+
+                    <span class="input-prefix">
+                        •
+                    </span>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="primary-liquid-button auth-submit"
+            >
+
+                <span>
+                    Sign in
+                </span>
+
+                <strong>
+                    →
+                </strong>
+
+            </button>
+
+
+        </form>
+
+
+        <div class="auth-footer">
+
+            <span>
+                Don't have an account?
+            </span>
+
+            <a href="{{ url_for('register') }}">
+                Create account
+            </a>
+
+        </div>
+
+
+    </section>
+
+
+</div>
+
+{% endblock %}

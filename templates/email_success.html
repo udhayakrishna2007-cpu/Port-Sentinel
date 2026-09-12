@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Report Sent — Port Sentinel
+{% endblock %}
+
+
+{% block content %}
+
+<div class="center-page">
+
+
+    <section class="success-card liquid-card">
+
+
+        <div class="success-symbol">
+            ✓
+        </div>
+
+
+        <div class="eyebrow">
+            REPORT DELIVERY
+        </div>
+
+
+        <h1>
+            Report sent successfully.
+        </h1>
+
+
+        <p>
+            Your Port Sentinel security report has been
+            delivered successfully.
+        </p>
+
+
+        <a
+            href="{{ url_for('report', scan_id=scan_id) }}"
+            class="primary-liquid-button"
+        >
+
+            <span>
+                Back to report
+            </span>
+
+            <strong>
+                →
+            </strong>
+
+        </a>
+
+
+    </section>
+
+
+</div>
+
+{% endblock %}

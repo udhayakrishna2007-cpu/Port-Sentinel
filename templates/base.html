@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#eaf1f6"
+    >
+
+    <title>
+        {% block title %}
+        Port Sentinel
+        {% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- =========================================================
+         LIQUID ENVIRONMENT
+    ========================================================== -->
+
+    <div
+        class="liquid-environment"
+        aria-hidden="true"
+    >
+
+        <div class="liquid-orb orb-one"></div>
+        <div class="liquid-orb orb-two"></div>
+        <div class="liquid-orb orb-three"></div>
+
+        <div class="liquid-glow"></div>
+
+        <div class="liquid-noise"></div>
+
+        <div class="liquid-lines"></div>
+
+    </div>
+
+
+    <!-- =========================================================
+         NAVIGATION
+    ========================================================== -->
+
+    <header class="navbar">
+
+        <a
+            href="{{ url_for('home') }}"
+            class="brand"
+        >
+
+            <span class="brand-symbol">
+
+                <span class="brand-symbol-inner"></span>
+
+            </span>
+
+            <span class="brand-copy">
+
+                <strong>
+                    PORT SENTINEL
+                </strong>
+
+                <small>
+                    Security intelligence
+                </small>
+
+            </span>
+
+        </a>
+
+
+        {% if session.get("user_id") %}
+
+        <nav class="liquid-nav">
+
+            <a
+                href="{{ url_for('home') }}"
+                class="
+                    nav-item
+                    {% if request.endpoint == 'home' %}
+                    active
+                    {% endif %}
+                "
+            >
+
+                <span class="nav-dot"></span>
+
+                Dashboard
+
+            </a>
+
+
+            <a
+                href="{{ url_for('history') }}"
+                class="
+                    nav-item
+                    {% if request.endpoint in ['history', 'scan_history'] %}
+                    active
+                    {% endif %}
+                "
+            >
+
+                <span class="nav-dot"></span>
+
+                History
+
+            </a>
+
+
+            <span class="nav-divider"></span>
+
+
+            <span class="nav-user">
+
+                <span class="user-orb">
+                    {{ session.get("username", "U")[:1]|upper }}
+                </span>
+
+                <span>
+                    {{ session.get("username") }}
+                </span>
+
+            </span>
+
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="nav-logout"
+            >
+                Log out
+            </a>
+
+        </nav>
+
+
+        {% else %}
+
+        <nav class="liquid-nav">
+
+            <a
+                href="{{ url_for('login') }}"
+                class="nav-item"
+            >
+                Sign in
+            </a>
+
+            <a
+                href="{{ url_for('register') }}"
+                class="nav-create"
+            >
+                Create account
+            </a>
+
+        </nav>
+
+        {% endif %}
+
+    </header>
+
+
+    <!-- =========================================================
+         GLOBAL FLASH MESSAGES
+    ========================================================== -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+        <div class="global-flash-container">
+
+            {% for category, message in messages %}
+
+            <div class="flash-message {{ category }}">
+
+                <span class="flash-dot"></span>
+
+                <span>
+                    {{ message }}
+                </span>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- =========================================================
+         PAGE
+    ========================================================== -->
+
+    <main class="page-shell">
+
+        <div class="page-transition">
+
+            {% block content %}
+            {% endblock %}
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================================================
+         CURSOR LIQUID EFFECT
+    ========================================================== -->
+
+    <div
+        class="cursor-liquid"
+        aria-hidden="true"
+    ></div>
+
+
+    <!-- =========================================================
+         GLOBAL UI SCRIPT
+    ========================================================== -->
+
+    <script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const root =
+                document.documentElement;
+
+            const cursor =
+                document.querySelector(
+                    ".cursor-liquid"
+                );
+
+
+            /*
+             * Cursor movement
+             */
+
+            document.addEventListener(
+                "pointermove",
+                function (event) {
+
+                    root.style.setProperty(
+                        "--cursor-x",
+                        event.clientX + "px"
+                    );
+
+                    root.style.setProperty(
+                        "--cursor-y",
+                        event.clientY + "px"
+                    );
+
+
+                    if (cursor) {
+
+                        cursor.style.transform =
+                            `translate3d(
+                                ${event.clientX - 110}px,
+                                ${event.clientY - 110}px,
+                                0
+                            )`;
+
+                    }
+
+                },
+                {
+                    passive: true
+                }
+            );
+
+
+            /*
+             * Liquid hover response
+             */
+
+            const interactiveElements =
+                document.querySelectorAll(
+                    `
+                    .liquid-card,
+                    .glass-card,
+                    .dashboard-card,
+                    .scanner-card,
+                    .results-card,
+                    .history-card,
+                    .security-card,
+                    .recommendations-card,
+                    .auth-card,
+                    .action-pill,
+                    button,
+                    .nav-item,
+                    .nav-create
+                    `
+                );
+
+
+            interactiveElements.forEach(
+                function (element) {
+
+                    element.addEventListener(
+                        "pointerenter",
+                        function () {
+
+                            element.classList.add(
+                                "liquid-hover"
+                            );
+
+                        }
+                    );
+
+
+                    element.addEventListener(
+                        "pointerleave",
+                        function () {
+
+                            element.classList.remove(
+                                "liquid-hover"
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+            /*
+             * Smooth internal page navigation
+             */
+
+            document
+                .querySelectorAll(
+                    'a[href^="#"]'
+                )
+                .forEach(
+                    function (link) {
+
+                        link.addEventListener(
+                            "click",
+                            function (event) {
+
+                                const targetId =
+                                    link.getAttribute(
+                                        "href"
+                                    );
+
+                                const target =
+                                    document.querySelector(
+                                        targetId
+                                    );
+
+
+                                if (!target) {
+                                    return;
+                                }
+
+
+                                event.preventDefault();
+
+
+                                target.scrollIntoView({
+                                    behavior:
+                                        "smooth",
+                                    block:
+                                        "start"
+                                });
+
+                            }
+                        );
+
+                    }
+                );
+
+
+            /*
+             * Smooth page transitions
+             */
+
+            document
+                .querySelectorAll(
+                    "a[href]"
+                )
+                .forEach(
+                    function (link) {
+
+                        const href =
+                            link.getAttribute(
+                                "href"
+                            );
+
+
+                        if (
+                            !href ||
+                            href.startsWith("#") ||
+                            href.startsWith("javascript:") ||
+                            link.hasAttribute("download") ||
+                            link.target === "_blank"
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        link.addEventListener(
+                            "click",
+                            function (event) {
+
+                                const destination =
+                                    new URL(
+                                        href,
+                                        window.location.href
+                                    );
+
+
+                                if (
+                                    destination.origin !==
+                                    window.location.origin
+                                ) {
+
+                                    return;
+
+                                }
+
+
+                                event.preventDefault();
+
+
+                                document.body.classList.add(
+                                    "page-leaving"
+                                );
+
+
+                                setTimeout(
+                                    function () {
+
+                                        window.location.href =
+                                            destination.href;
+
+                                    },
+                                    220
+                                );
+
+                            }
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+    </script>
+
+
+    {% block scripts %}
+    {% endblock %}
+
+
+</body>
+
+</html>

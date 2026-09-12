@@ -1,0 +1,475 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Scanning — Port Sentinel
+{% endblock %}
+
+
+{% block content %}
+
+<div class="scan-loading-page">
+
+
+    <div class="scan-loading-orbit">
+
+        <div class="orbit-ring ring-one"></div>
+        <div class="orbit-ring ring-two"></div>
+        <div class="orbit-ring ring-three"></div>
+
+
+        <div class="scan-core">
+
+            <div class="scan-core-glass">
+
+                <span
+                    id="loadingPercentage"
+                    class="scan-core-number"
+                >
+                    0%
+                </span>
+
+                <span class="scan-core-label">
+                    SCANNING
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="scan-loading-content">
+
+        <div class="eyebrow">
+            PORT SENTINEL / LIVE ANALYSIS
+        </div>
+
+
+        <h1
+            id="loadingStage"
+        >
+            Initializing scanner
+        </h1>
+
+
+        <p
+            id="loadingStatus"
+        >
+            Preparing security analysis...
+        </p>
+
+
+        <div class="loading-target-pill">
+
+            <span>
+                TARGET
+            </span>
+
+            <strong id="loadingTarget">
+                {{ target }}
+            </strong>
+
+        </div>
+
+
+        <div class="loading-progress-track">
+
+            <div
+                id="loadingProgress"
+                class="loading-progress-fill"
+            ></div>
+
+        </div>
+
+
+        <div class="loading-meta">
+
+            <span>
+                Security engine active
+            </span>
+
+            <span>
+                Live analysis
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const percentage =
+            document.getElementById(
+                "loadingPercentage"
+            );
+
+        const progress =
+            document.getElementById(
+                "loadingProgress"
+            );
+
+        const stage =
+            document.getElementById(
+                "loadingStage"
+            );
+
+        const status =
+            document.getElementById(
+                "loadingStatus"
+            );
+
+
+        const stages = [
+
+            {
+                percent: 15,
+                stage:
+                    "Initializing scanner",
+                status:
+                    "Preparing security analysis..."
+            },
+
+            {
+                percent: 35,
+                stage:
+                    "Discovering ports",
+                status:
+                    "Scanning the target for available ports..."
+            },
+
+            {
+                percent: 55,
+                stage:
+                    "Analyzing services",
+                status:
+                    "Analyzing detected network services..."
+            },
+
+            {
+                percent: 75,
+                stage:
+                    "Identifying services",
+                status:
+                    "Identifying service and version information..."
+            },
+
+            {
+                percent: 90,
+                stage:
+                    "Building assessment",
+                status:
+                    "Preparing security recommendations..."
+            }
+
+        ];
+
+
+        let currentPercentage = 0;
+
+        let currentStage = 0;
+
+        let animationTimer = null;
+
+        let stageTimer = null;
+
+
+        function updateProgress(value) {
+
+            if (percentage) {
+
+                percentage.textContent =
+                    value + "%";
+
+            }
+
+
+            if (progress) {
+
+                progress.style.width =
+                    value + "%";
+
+            }
+
+        }
+
+
+        function animateTo(targetPercentage) {
+
+            if (animationTimer) {
+
+                clearInterval(
+                    animationTimer
+                );
+
+            }
+
+
+            animationTimer =
+                setInterval(
+                    function () {
+
+                        if (
+                            currentPercentage >=
+                            targetPercentage
+                        ) {
+
+                            clearInterval(
+                                animationTimer
+                            );
+
+                            animationTimer =
+                                null;
+
+                            return;
+
+                        }
+
+
+                        currentPercentage++;
+
+                        updateProgress(
+                            currentPercentage
+                        );
+
+                    },
+                    35
+                );
+
+        }
+
+
+        function runStage() {
+
+            if (
+                currentStage >=
+                stages.length
+            ) {
+
+                return;
+
+            }
+
+
+            const current =
+                stages[currentStage];
+
+
+            if (stage) {
+
+                stage.textContent =
+                    current.stage;
+
+            }
+
+
+            if (status) {
+
+                status.textContent =
+                    current.status;
+
+            }
+
+
+            animateTo(
+                current.percent
+            );
+
+
+            currentStage++;
+
+        }
+
+
+        runStage();
+
+
+        stageTimer =
+            setInterval(
+                function () {
+
+                    if (
+                        currentStage >=
+                        stages.length
+                    ) {
+
+                        clearInterval(
+                            stageTimer
+                        );
+
+                        stageTimer =
+                            null;
+
+                        return;
+
+                    }
+
+
+                    runStage();
+
+                },
+                2200
+            );
+
+
+        function checkScanStatus() {
+
+            fetch(
+                "{{ url_for('scan_status', job_id=job_id) }}",
+                {
+                    method: "GET",
+
+                    headers: {
+                        "X-Requested-With":
+                            "XMLHttpRequest"
+                    },
+
+                    cache: "no-store"
+                }
+            )
+
+            .then(
+                function (response) {
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Unable to check scan status."
+                        );
+
+                    }
+
+                    return response.json();
+
+                }
+            )
+
+            .then(
+                function (data) {
+
+                    if (
+                        data.status ===
+                        "complete"
+                    ) {
+
+                        if (stageTimer) {
+
+                            clearInterval(
+                                stageTimer
+                            );
+
+                        }
+
+
+                        if (animationTimer) {
+
+                            clearInterval(
+                                animationTimer
+                            );
+
+                        }
+
+
+                        currentPercentage =
+                            100;
+
+
+                        updateProgress(
+                            100
+                        );
+
+
+                        if (stage) {
+
+                            stage.textContent =
+                                "Scan complete";
+
+                        }
+
+
+                        if (status) {
+
+                            status.textContent =
+                                "Security analysis completed. Opening results...";
+
+                        }
+
+
+                        setTimeout(
+                            function () {
+
+                                window.location.href =
+                                    "{{ url_for('scan_results', job_id=job_id) }}";
+
+                            },
+                            900
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    if (
+                        data.status ===
+                        "error"
+                    ) {
+
+                        window.location.href =
+                            "{{ url_for('scan_results', job_id=job_id) }}";
+
+                        return;
+
+                    }
+
+
+                    setTimeout(
+                        checkScanStatus,
+                        1000
+                    );
+
+                }
+            )
+
+            .catch(
+                function () {
+
+                    if (status) {
+
+                        status.textContent =
+                            "Maintaining secure scanner connection...";
+
+                    }
+
+
+                    setTimeout(
+                        checkScanStatus,
+                        2000
+                    );
+
+                }
+            );
+
+        }
+
+
+        setTimeout(
+            checkScanStatus,
+            800
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}

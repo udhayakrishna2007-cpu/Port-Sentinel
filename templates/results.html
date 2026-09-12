@@ -1,0 +1,619 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Scan Results — Port Sentinel
+{% endblock %}
+
+
+{% block content %}
+
+<div class="results-page">
+
+
+    <!-- HERO -->
+
+    <section class="results-hero">
+
+        <div>
+
+            <div class="eyebrow">
+                SECURITY ASSESSMENT / RESULTS
+            </div>
+
+            <h1>
+                Scan results
+            </h1>
+
+            <p>
+                Security intelligence discovered during the assessment.
+            </p>
+
+        </div>
+
+
+        <div class="target-floating-card liquid-card">
+
+            <span>
+                TARGET
+            </span>
+
+            <strong>
+                {{ target }}
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- SUMMARY -->
+
+    <section class="result-metric-grid">
+
+
+        <div class="result-metric liquid-card">
+
+            <span>
+                HOSTS
+            </span>
+
+            <strong>
+                {{ hosts_found }}
+            </strong>
+
+        </div>
+
+
+        <div class="result-metric liquid-card">
+
+            <span>
+                OPEN PORTS
+            </span>
+
+            <strong>
+                {{ open_ports }}
+            </strong>
+
+        </div>
+
+
+        <div class="result-metric liquid-card">
+
+            <span>
+                SERVICES
+            </span>
+
+            <strong>
+                {{ services_found }}
+            </strong>
+
+        </div>
+
+
+        <div class="result-metric liquid-card">
+
+            <span>
+                FINDINGS
+            </span>
+
+            <strong>
+                {{ recommendations|length }}
+            </strong>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- PORT DATA -->
+
+    <section class="results-card liquid-card">
+
+        <div class="panel-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    DISCOVERY DATA
+                </span>
+
+                <h2>
+                    Port results
+                </h2>
+
+            </div>
+
+
+            {% if results %}
+
+            <span class="panel-count">
+                {{ results|length }} result(s)
+            </span>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if results %}
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Host</th>
+                        <th>Protocol</th>
+                        <th>Port</th>
+                        <th>State</th>
+                        <th>Service</th>
+                        <th>Product</th>
+                        <th>Version</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for result in results %}
+
+                <tr>
+
+                    <td>
+                        {{ result.host }}
+                    </td>
+
+                    <td>
+                        {{ result.protocol }}
+                    </td>
+
+                    <td>
+                        <strong class="port-number">
+                            {{ result.port }}
+                        </strong>
+                    </td>
+
+                    <td>
+
+                        <span class="state-badge">
+                            {{ result.state }}
+                        </span>
+
+                    </td>
+
+                    <td>
+                        {{ result.service }}
+                    </td>
+
+                    <td>
+                        {% if result.product %}
+                            {{ result.product }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if result.version %}
+                            {{ result.version }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-state-icon">
+                ✓
+            </div>
+
+            <h3>
+                No open ports found
+            </h3>
+
+            <p>
+                The scan completed successfully, but no open ports
+                were discovered on the target.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- HOST INFORMATION -->
+
+    {% if hosts %}
+
+    <section class="results-card liquid-card">
+
+        <div class="panel-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    ENVIRONMENT
+                </span>
+
+                <h2>
+                    Host information
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="host-grid">
+
+        {% for host in hosts %}
+
+            <article class="host-card">
+
+                <div class="host-card-top">
+
+                    <strong>
+                        {{ host.host }}
+                    </strong>
+
+                    {% if host.host_state %}
+
+                    <span class="state-badge">
+                        {{ host.host_state }}
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                {% if host.hostname %}
+
+                <div class="host-property">
+
+                    <span>
+                        Hostname
+                    </span>
+
+                    <strong>
+                        {{ host.hostname }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+
+                {% if host.os_name %}
+
+                <div class="host-property">
+
+                    <span>
+                        Operating System
+                    </span>
+
+                    <strong>
+                        {{ host.os_name }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+
+                {% if host.os_family %}
+
+                <div class="host-property">
+
+                    <span>
+                        OS Family
+                    </span>
+
+                    <strong>
+                        {{ host.os_family }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+
+                {% if host.os_generation %}
+
+                <div class="host-property">
+
+                    <span>
+                        OS Generation
+                    </span>
+
+                    <strong>
+                        {{ host.os_generation }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+
+                {% if host.os_accuracy %}
+
+                <div class="host-property">
+
+                    <span>
+                        OS Accuracy
+                    </span>
+
+                    <strong>
+                        {{ host.os_accuracy }}%
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+
+                {% if host.mac %}
+
+                <div class="host-property">
+
+                    <span>
+                        MAC Address
+                    </span>
+
+                    <strong>
+                        {{ host.mac }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+
+                {% if host.vendor %}
+
+                <div class="host-property">
+
+                    <span>
+                        Vendor
+                    </span>
+
+                    <strong>
+                        {{ host.vendor }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+            </article>
+
+        {% endfor %}
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- SECURITY ASSESSMENT -->
+
+    <section class="security-card liquid-card">
+
+        <div class="security-card-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    SECURITY INTELLIGENCE
+                </span>
+
+                <h2>
+                    Security assessment
+                </h2>
+
+            </div>
+
+
+            <div class="security-status {{ security_status_class }}">
+
+                {% if security_status_class == "high" %}
+                    HIGH PRIORITY
+                {% elif security_status_class == "medium" %}
+                    ATTENTION REQUIRED
+                {% elif security_status_class == "info" %}
+                    INFORMATIONAL
+                {% else %}
+                    NO IMMEDIATE FINDINGS
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <div class="security-count-grid">
+
+            <div>
+
+                <strong>
+                    {{ high_count }}
+                </strong>
+
+                <span>
+                    High
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    {{ medium_count }}
+                </strong>
+
+                <span>
+                    Medium
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    {{ info_count }}
+                </strong>
+
+                <span>
+                    Info
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- RECOMMENDATIONS -->
+
+    {% if recommendations %}
+
+    <section class="recommendations-card liquid-card">
+
+        <div class="panel-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    ACTION REQUIRED
+                </span>
+
+                <h2>
+                    Security recommendations
+                </h2>
+
+            </div>
+
+
+            <span class="panel-count">
+                {{ recommendations|length }}
+            </span>
+
+        </div>
+
+
+        <div class="recommendations-list">
+
+        {% for recommendation in recommendations %}
+
+            <article class="recommendation-item">
+
+                <div class="recommendation-top">
+
+                    <span
+                        class="
+                            severity-badge
+                            {{ recommendation.severity|lower }}
+                        "
+                    >
+                        {{ recommendation.severity }}
+                    </span>
+
+
+                    <span class="recommendation-service">
+
+                        {{ recommendation.service }}
+
+                        <span>
+                            ·
+                        </span>
+
+                        Port {{ recommendation.port }}
+
+                    </span>
+
+                </div>
+
+
+                <h3>
+                    {{ recommendation.message }}
+                </h3>
+
+
+                <div class="recommendation-action">
+
+                    <span>
+                        RECOMMENDATION
+                    </span>
+
+                    <p>
+                        {{ recommendation.recommendation }}
+                    </p>
+
+                </div>
+
+            </article>
+
+        {% endfor %}
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- ACTIONS -->
+
+    <div class="results-actions">
+
+        <a
+            href="{{ url_for('report', scan_id=scan_id) }}"
+            class="primary-liquid-button"
+        >
+            <span>
+                View full report
+            </span>
+
+            <strong>
+                →
+            </strong>
+        </a>
+
+
+        <a
+            href="{{ url_for('home') }}"
+            class="secondary-liquid-button"
+        >
+            Back to dashboard
+        </a>
+
+    </div>
+
+
+</div>
+
+{% endblock %}

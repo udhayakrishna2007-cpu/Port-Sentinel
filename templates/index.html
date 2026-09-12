@@ -1,0 +1,480 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Port Sentinel — Dashboard
+{% endblock %}
+
+
+{% block content %}
+
+<div class="dashboard-page">
+
+
+    <!-- =========================================================
+         HERO
+    ========================================================== -->
+
+    <section class="dashboard-hero">
+
+        <div class="hero-copy">
+
+            <div class="eyebrow">
+                SECURITY INTELLIGENCE
+            </div>
+
+            <h1>
+                Your security.
+                <span>
+                    Clearly understood.
+                </span>
+            </h1>
+
+            <p>
+                Scan your environment, understand exposed services,
+                and turn raw network data into actionable security insight.
+            </p>
+
+        </div>
+
+
+        <div class="hero-status">
+
+            <span class="status-pulse"></span>
+
+            Security engine ready
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         STATISTICS
+    ========================================================== -->
+
+    <section class="dashboard-stat-grid">
+
+
+        <article class="dashboard-card stat-card">
+
+            <div class="stat-top">
+
+                <span class="stat-label">
+                    TOTAL SCANS
+                </span>
+
+                <span class="stat-icon">
+                    ↗
+                </span>
+
+            </div>
+
+
+            <strong class="stat-number">
+                {{ total_scans }}
+            </strong>
+
+
+            <span class="stat-caption">
+                Completed security assessments
+            </span>
+
+        </article>
+
+
+        <article class="dashboard-card stat-card">
+
+            <div class="stat-top">
+
+                <span class="stat-label">
+                    OPEN PORTS
+                </span>
+
+                <span class="stat-icon">
+                    ◇
+                </span>
+
+            </div>
+
+
+            <strong class="stat-number">
+                {{ total_open_ports }}
+            </strong>
+
+
+            <span class="stat-caption">
+                Services currently exposed
+            </span>
+
+        </article>
+
+
+        <article class="dashboard-card stat-card stat-card-featured">
+
+            <div class="stat-top">
+
+                <span class="stat-label">
+                    LATEST TARGET
+                </span>
+
+                <span class="stat-icon">
+                    •
+                </span>
+
+            </div>
+
+
+            <strong class="stat-target">
+
+                {% if latest_scan %}
+                    {{ latest_scan[1] }}
+                {% else %}
+                    —
+                {% endif %}
+
+            </strong>
+
+
+            <span class="stat-caption">
+                Most recent assessment
+            </span>
+
+        </article>
+
+
+    </section>
+
+
+    <!-- =========================================================
+         MAIN SCANNER EXPERIENCE
+    ========================================================== -->
+
+    <section
+        class="scanner-layout"
+        id="scanner"
+    >
+
+
+        <div class="scanner-card liquid-card">
+
+
+            <div class="scanner-card-glow"></div>
+
+
+            <div class="scanner-intro">
+
+                <span class="scanner-index">
+                    01
+                </span>
+
+
+                <div>
+
+                    <div class="eyebrow">
+                        DISCOVERY ENGINE
+                    </div>
+
+                    <h2>
+                        Start a security scan
+                    </h2>
+
+                    <p>
+                        Enter a target and choose how deeply
+                        Port Sentinel should inspect it.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form
+                action="/scan"
+                method="POST"
+                class="scanner-form"
+                id="scannerForm"
+            >
+
+
+                <div class="field-group">
+
+                    <label for="target">
+                        TARGET
+                    </label>
+
+                    <div class="input-shell">
+
+                        <span class="input-prefix">
+                            //
+                        </span>
+
+                        <input
+                            type="text"
+                            id="target"
+                            name="target"
+                            placeholder="127.0.0.1"
+                            autocomplete="off"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="field-group">
+
+                    <label for="scan_type">
+                        SCAN PROFILE
+                    </label>
+
+                    <div class="input-shell select-shell">
+
+                        <span class="input-prefix">
+                            ◌
+                        </span>
+
+                        <select
+                            id="scan_type"
+                            name="scan_type"
+                        >
+
+                            <option value="tcp">
+                                TCP Scan
+                            </option>
+
+                            <option value="udp">
+                                UDP Scan
+                            </option>
+
+                            <option value="syn">
+                                SYN Scan
+                            </option>
+
+                            <option value="version">
+                                Service Version Detection
+                            </option>
+
+                            <option value="os">
+                                OS Detection
+                            </option>
+
+                            <option value="aggressive">
+                                Aggressive Scan
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-liquid-button"
+                    id="scanButton"
+                >
+
+                    <span>
+                        Start security scan
+                    </span>
+
+                    <strong>
+                        →
+                    </strong>
+
+                </button>
+
+
+            </form>
+
+
+            <div class="scanner-footer">
+
+                <span class="scanner-live-dot"></span>
+
+                Local and private network targets supported
+
+                <span class="scanner-footer-line"></span>
+
+                Secure scan session
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =====================================================
+             RIGHT INFORMATION PANEL
+        ====================================================== -->
+
+        <aside class="scanner-side">
+
+
+            <div class="floating-info-card liquid-card">
+
+                <span class="info-number">
+                    02
+                </span>
+
+                <div class="eyebrow">
+                    WHAT HAPPENS
+                </div>
+
+                <h3>
+                    Discover.
+                    Analyze.
+                    Understand.
+                </h3>
+
+                <p>
+                    Port Sentinel identifies exposed ports,
+                    running services and available system
+                    information, then turns those results into
+                    security recommendations.
+                </p>
+
+            </div>
+
+
+            <div class="mini-metric-card liquid-card">
+
+                <span>
+                    ENGINE STATUS
+                </span>
+
+                <strong>
+                    READY
+                </strong>
+
+                <div class="mini-progress">
+
+                    <i></i>
+
+                </div>
+
+            </div>
+
+
+        </aside>
+
+
+    </section>
+
+
+    <!-- =========================================================
+         RECENT ACTIVITY
+    ========================================================== -->
+
+    <section class="dashboard-bottom">
+
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    ACTIVITY
+                </span>
+
+                <h2>
+                    Recent security work
+                </h2>
+
+            </div>
+
+
+            <a
+                href="{{ url_for('history') }}"
+                class="text-action"
+            >
+                View history →
+            </a>
+
+        </div>
+
+
+        <div class="activity-empty liquid-card">
+
+            <div class="activity-symbol">
+                ◌
+            </div>
+
+            <div>
+
+                <strong>
+                    Your scans live here
+                </strong>
+
+                <p>
+                    Run your first assessment to begin building
+                    your security history.
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+</div>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const form =
+            document.getElementById(
+                "scannerForm"
+            );
+
+
+        const button =
+            document.getElementById(
+                "scanButton"
+            );
+
+
+        if (!form) {
+            return;
+        }
+
+
+        form.addEventListener(
+            "submit",
+            function () {
+
+                if (!button) {
+                    return;
+                }
+
+
+                button.disabled = true;
+
+
+                button.innerHTML = `
+                    <span>
+                        Preparing scan...
+                    </span>
+                    <strong>
+                        ◌
+                    </strong>
+                `;
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}
